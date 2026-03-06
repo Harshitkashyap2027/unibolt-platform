@@ -1,0 +1,157 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ──────────────────────────────────────────────────────────────
+    // Helper functions
+    // ──────────────────────────────────────────────────────────────
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isRole(role) {
+      return isAuthenticated()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function isValidString(field, maxLen) {
+      return field is string && field.size() > 0 && field.size() <= maxLen;
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Users collection
+    // ──────────────────────────────────────────────────────────────
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && hasRequiredFields(['email', 'role', 'displayName', 'createdAt'])
+        && isValidString(request.resource.data.displayName, 100)
+        && request.resource.data.role in ['student', 'employer'];
+      allow update: if isOwner(userId)
+        && !('role' in request.resource.data.diff(resource.data).affectedKeys())
+        && !('email' in request.resource.data.diff(resource.data).affectedKeys());
+      allow delete: if false;
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Public profiles (leaderboard data, minimal)
+    // ──────────────────────────────────────────────────────────────
+    match /publicProfiles/{userId} {
+      allow read: if true;
+      allow write: if isOwner(userId);
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Internships collection
+    // ──────────────────────────────────────────────────────────────
+    match /internships/{internshipId} {
+      allow read: if true;
+      allow create: if isRole('employer')
+        && hasRequiredFields(['title', 'description', 'employerId', 'skills', 'createdAt'])
+        && request.resource.data.employerId == request.auth.uid
+        && isValidString(request.resource.data.title, 200)
+        && isValidString(request.resource.data.description, 5000);
+      allow update: if isRole('employer')
+        && resource.data.employerId == request.auth.uid;
+      allow delete: if isRole('employer')
+        && resource.data.employerId == request.auth.uid;
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Applications collection
+    // ──────────────────────────────────────────────────────────────
+    match /applications/{applicationId} {
+      // Students read their own; employers read apps for their internships
+      allow read: if isAuthenticated()
+        && (resource.data.studentId == request.auth.uid
+          || resource.data.employerId == request.auth.uid);
+
+      // Students create applications (once — no modification after)
+      allow create: if isRole('student')
+        && hasRequiredFields(['studentId', 'internshipId', 'employerId', 'status', 'submittedAt'])
+        && request.resource.data.studentId == request.auth.uid
+        && request.resource.data.status == 'applied';
+
+      // Only employers can update status (screening, interview, offer, rejected)
+      allow update: if isRole('employer')
+        && resource.data.employerId == request.auth.uid
+        && request.resource.data.studentId == resource.data.studentId
+        && request.resource.data.internshipId == resource.data.internshipId;
+
+      allow delete: if false;
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Leaderboard collection (public read)
+    // ──────────────────────────────────────────────────────────────
+    match /leaderboard/{entryId} {
+      allow read: if true;
+      allow write: if false; // Written only by Cloud Functions
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // ELO ratings
+    // ──────────────────────────────────────────────────────────────
+    match /eloRatings/{userId} {
+      allow read: if true;
+      allow write: if false; // Written only by Cloud Functions
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Skill trees (per user)
+    // ──────────────────────────────────────────────────────────────
+    match /skillTrees/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId);
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Chat conversations
+    // ──────────────────────────────────────────────────────────────
+    match /conversations/{conversationId} {
+      allow read, write: if isAuthenticated()
+        && request.auth.uid in resource.data.participants;
+
+      allow create: if isAuthenticated()
+        && request.auth.uid in request.resource.data.participants
+        && hasRequiredFields(['participants', 'createdAt', 'lastMessage']);
+
+      match /messages/{messageId} {
+        allow read: if isAuthenticated()
+          && request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants;
+        allow create: if isAuthenticated()
+          && request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participants
+          && request.resource.data.senderId == request.auth.uid
+          && hasRequiredFields(['senderId', 'text', 'timestamp'])
+          && isValidString(request.resource.data.text, 2000);
+        allow update, delete: if false;
+      }
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Notifications (per user)
+    // ──────────────────────────────────────────────────────────────
+    match /notifications/{userId}/items/{notificationId} {
+      allow read, delete: if isOwner(userId);
+      allow create: if false; // Created only by Cloud Functions
+      allow update: if isOwner(userId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Deny all other access
+    // ──────────────────────────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

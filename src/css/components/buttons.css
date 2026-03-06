@@ -1,0 +1,165 @@
+/* ============================================================
+   UniBolt Button Components
+   ============================================================ */
+
+/* ── Base Button ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition-base);
+  white-space: nowrap;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 0.15s ease;
+  border-radius: inherit;
+}
+.btn:hover::after { background: rgba(255,255,255,0.05); }
+.btn:active::after { background: rgba(0,0,0,0.1); }
+
+/* ── Primary ── */
+.btn-primary {
+  background: var(--gradient-brand);
+  color: white;
+  box-shadow: 0 4px 15px rgba(99,102,241,0.35);
+}
+.btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(99,102,241,0.5);
+  transform: translateY(-1px);
+  color: white;
+}
+.btn-primary:active { transform: translateY(0); }
+
+/* ── Secondary ── */
+.btn-secondary {
+  background: var(--glass-bg);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  backdrop-filter: var(--glass-blur);
+}
+.btn-secondary:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--color-brand-primary);
+  color: var(--color-brand-tertiary);
+}
+
+/* ── Ghost ── */
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid transparent;
+}
+.btn-ghost:hover {
+  background: var(--glass-bg);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+
+/* ── Danger ── */
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+}
+.btn-danger:hover {
+  box-shadow: 0 6px 20px rgba(239,68,68,0.45);
+  transform: translateY(-1px);
+  color: white;
+}
+
+/* ── Success ── */
+.btn-success {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  box-shadow: 0 4px 15px rgba(34,197,94,0.3);
+}
+
+/* ── Outline ── */
+.btn-outline {
+  background: transparent;
+  color: var(--color-brand-primary);
+  border: 1px solid var(--color-brand-primary);
+}
+.btn-outline:hover {
+  background: rgba(99,102,241,0.1);
+  color: var(--color-brand-tertiary);
+  border-color: var(--color-brand-tertiary);
+}
+
+/* ── Icon-only ── */
+.btn-icon {
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  aspect-ratio: 1;
+}
+
+/* ── Sizes ── */
+.btn-xs  { padding: var(--space-1) var(--space-3); font-size: var(--text-xs); }
+.btn-sm  { padding: var(--space-2) var(--space-4); font-size: var(--text-sm); }
+.btn-lg  { padding: var(--space-4) var(--space-8); font-size: var(--text-lg); }
+.btn-xl  { padding: var(--space-5) var(--space-10); font-size: var(--text-xl); }
+
+/* ── Full Width ── */
+.btn-block { width: 100%; }
+
+/* ── Loading State ── */
+.btn-loading {
+  color: transparent !important;
+  pointer-events: none;
+}
+.btn-loading::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: btn-spin 0.7s linear infinite;
+}
+@keyframes btn-spin { to { transform: rotate(360deg); } }
+
+/* ── Icon in Button ── */
+.btn svg, .btn .icon {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+}
+
+/* ── Button Group ── */
+.btn-group {
+  display: inline-flex;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+.btn-group .btn {
+  border-radius: 0;
+  border: none;
+  border-right: 1px solid var(--color-border);
+}
+.btn-group .btn:last-child { border-right: none; }

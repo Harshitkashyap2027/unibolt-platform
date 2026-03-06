@@ -1,0 +1,255 @@
+/* ============================================================
+   UniBolt Input Components
+   ============================================================ */
+
+/* ── Form Group ── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.form-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  letter-spacing: var(--tracking-wide);
+}
+
+.form-hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+}
+
+.form-error {
+  font-size: var(--text-xs);
+  color: var(--color-error);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* ── Base Input ── */
+.input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--glass-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  transition: var(--transition-base);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-brand-primary);
+  background: rgba(99,102,241,0.05);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input.error {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px var(--color-error-bg);
+}
+.input.success {
+  border-color: var(--color-success);
+  box-shadow: 0 0 0 3px var(--color-success-bg);
+}
+
+/* ── Input with Icon ── */
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon-left  .input { padding-left: var(--space-10); }
+.input-icon-right .input { padding-right: var(--space-10); }
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-tertiary);
+  pointer-events: none;
+  width: 20px;
+  height: 20px;
+}
+.input-icon-left  .input-icon { left:  var(--space-3); }
+.input-icon-right .input-icon { right: var(--space-3); }
+
+.input-action {
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-tertiary);
+  padding: var(--space-1);
+  transition: var(--transition-fast);
+}
+.input-action:hover { color: var(--color-text-primary); }
+
+/* ── Textarea ── */
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--glass-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  transition: var(--transition-base);
+  width: 100%;
+}
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-brand-primary);
+  background: rgba(99,102,241,0.05);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+.textarea::placeholder { color: var(--color-text-tertiary); }
+
+/* ── Select ── */
+.select {
+  width: 100%;
+  padding: var(--space-3) var(--space-8) var(--space-3) var(--space-4);
+  background: var(--glass-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E") no-repeat right var(--space-3) center / 20px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  cursor: pointer;
+  transition: var(--transition-base);
+  appearance: none;
+}
+.select:focus {
+  outline: none;
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
+.select option {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+/* ── Checkbox & Radio ── */
+.checkbox-wrapper, .radio-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+
+.checkbox, .radio {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--color-border);
+  background: var(--glass-bg);
+  appearance: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: var(--transition-fast);
+  position: relative;
+}
+.checkbox { border-radius: var(--radius-sm); }
+.radio    { border-radius: 50%; }
+
+.checkbox:checked, .radio:checked {
+  background: var(--color-brand-primary);
+  border-color: var(--color-brand-primary);
+}
+.checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid white;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+.radio:checked::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: white;
+  border-radius: 50%;
+}
+
+/* ── Toggle/Switch ── */
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+.toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-elevated);
+  border: 2px solid var(--color-border);
+  position: relative;
+  cursor: pointer;
+  transition: var(--transition-base);
+  appearance: none;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-text-tertiary);
+  top: 2px;
+  left: 2px;
+  transition: var(--transition-bounce);
+}
+.toggle:checked {
+  background: var(--color-brand-primary);
+  border-color: var(--color-brand-primary);
+}
+.toggle:checked::after {
+  left: calc(100% - 18px);
+  background: white;
+}
+
+/* ── Search Input ── */
+.search-input {
+  background: var(--glass-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-10);
+  color: var(--color-text-primary);
+  font-size: var(--text-sm);
+  width: 100%;
+  transition: var(--transition-base);
+}
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-brand-primary);
+  background: rgba(99,102,241,0.05);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+}
