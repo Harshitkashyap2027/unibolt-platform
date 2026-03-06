@@ -30,9 +30,11 @@ const publicOnlyRoutes = new Set(['/auth', '/landing', '/']);
 let currentUser = null;
 
 // ── Auth state listener ───────────────────────────────────────────────────
-onAuthStateChanged(auth, (user) => {
-  currentUser = user;
-});
+if (auth) {
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+  });
+}
 
 // ── Navigate helper ───────────────────────────────────────────────────────
 export async function navigate(path, { replace = false } = {}) {

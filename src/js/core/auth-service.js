@@ -58,18 +58,24 @@ export async function resetPassword(email) {
 
 /** ── Get Current User Role ──────────────────────────────────────────────── */
 export async function getUserRole(uid) {
+  if (!db) return null;
   const snap = await getDoc(doc(db, 'users', uid));
   return snap.exists() ? snap.data().role : null;
 }
 
 /** ── Get User Profile ───────────────────────────────────────────────────── */
 export async function getUserProfile(uid) {
+  if (!db) return null;
   const snap = await getDoc(doc(db, 'users', uid));
   return snap.exists() ? { id: snap.id, ...snap.data() } : null;
 }
 
 /** ── Auth State Observer ────────────────────────────────────────────────── */
 export function onAuthChange(callback) {
+  if (!auth) {
+    callback({ user: null, profile: null });
+    return () => {};
+  }
   return onAuthStateChanged(auth, async (user) => {
     if (user) {
       const profile = await getUserProfile(user.uid).catch(() => null);
@@ -82,11 +88,15 @@ export function onAuthChange(callback) {
 
 /** ── Current User Getter ────────────────────────────────────────────────── */
 export function getCurrentUser() {
-  return auth.currentUser;
+  return auth ? auth.currentUser : null;
 }
 
 /** ── Require Auth Guard ─────────────────────────────────────────────────── */
 export function requireAuth(redirectPath = '/src/pages/auth/auth.html') {
+  if (!auth) {
+    window.location.href = redirectPath;
+    return Promise.resolve(null);
+  }
   return new Promise((resolve) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
@@ -102,6 +112,7 @@ export function requireAuth(redirectPath = '/src/pages/auth/auth.html') {
 /** ── Require Role Guard ─────────────────────────────────────────────────── */
 export async function requireRole(expectedRole, redirectPath = '/') {
   const user = await requireAuth();
+  if (!user) return null;
   const role = await getUserRole(user.uid);
   if (role !== expectedRole) {
     window.location.href = redirectPath;
@@ -112,6 +123,7 @@ export async function requireRole(expectedRole, redirectPath = '/') {
 
 /** ── Create User Document in Firestore ──────────────────────────────────── */
 async function createUserDocument(user, { role, displayName }) {
+  if (!db) return;
   const userRef = doc(db, 'users', user.uid);
   const existing = await getDoc(userRef);
   if (!existing.exists()) {
