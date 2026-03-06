@@ -7,7 +7,9 @@ let notificationPermission = Notification?.permission || 'default';
 /** ── Request browser notification permission ─────────────────────────── */
 export async function requestPermission() {
   if (!('Notification' in window)) return 'unsupported';
-  if (notificationPermission === 'granted') return 'granted';
+  // Always read the live permission state (handles browser-settings changes)
+  if (Notification.permission === 'granted') return 'granted';
+  if (Notification.permission === 'denied')  return 'denied';
   notificationPermission = await Notification.requestPermission();
   return notificationPermission;
 }
@@ -19,10 +21,10 @@ export async function requestPermission() {
  */
 export async function showBrowserNotification(title, options = {}) {
   if (!('Notification' in window)) return;
-  if (notificationPermission !== 'granted') {
+  if (Notification.permission !== 'granted') {
     await requestPermission();
   }
-  if (notificationPermission !== 'granted') return;
+  if (Notification.permission !== 'granted') return;
 
   const sw = await navigator.serviceWorker?.ready;
   const payload = {

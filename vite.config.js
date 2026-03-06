@@ -17,6 +17,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    chunkSizeWarningLimit: 700,
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
@@ -28,6 +29,15 @@ export default defineConfig({
         leaderboard: resolve(__dirname, 'src/pages/leaderboard/leaderboard.html'),
         chat: resolve(__dirname, 'src/pages/chat/chat.html'),
         profile: resolve(__dirname, 'src/pages/profile/profile.html'),
+      },
+      output: {
+        manualChunks: {
+          'firebase-core':      ['firebase/app', 'firebase/auth'],
+          'firebase-firestore':  ['firebase/firestore'],
+          'firebase-storage':    ['firebase/storage'],
+          'firebase-functions':  ['firebase/functions'],
+          'firebase-app-check':  ['firebase/app-check'],
+        },
       },
     },
     sourcemap: true,

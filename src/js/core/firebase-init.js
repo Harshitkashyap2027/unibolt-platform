@@ -45,7 +45,7 @@ if (appCheckKey && import.meta.env.VITE_APP_ENV !== 'development') {
 }
 
 // ── Emulators (development only) ─────────────────────────────────────────────
-if (import.meta.env.VITE_APP_ENV === 'development' && typeof window !== 'undefined') {
+if (import.meta.env.VITE_APP_ENV === 'development') {
   try {
     connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
     connectFirestoreEmulator(db, 'localhost', 8080);

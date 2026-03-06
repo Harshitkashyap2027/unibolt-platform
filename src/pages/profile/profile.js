@@ -475,7 +475,13 @@ async function handleResumeUpload(file) {
     }, 2000);
   } catch (err) {
     if (progressEl) progressEl.style.display = 'none';
-    const msg = err?.message?.includes('size') ? 'File exceeds 10 MB limit.' : 'Upload failed. Please try again.';
+    const msg = err?.code === 'storage/quota-exceeded'
+      ? 'Storage quota exceeded. Please contact support.'
+      : err?.code === 'storage/unauthorized'
+        ? 'Upload not authorized. Please sign in again.'
+        : err?.message?.includes('too large') || err?.message?.includes('size')
+          ? 'File exceeds the size limit.'
+          : 'Upload failed. Please try again.';
     toast.error(msg);
   }
 }
