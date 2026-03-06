@@ -1,0 +1,2 @@
+function o(e){return e>=2400?{title:"Grandmaster",color:"#ffd700",icon:"👑"}:e>=2200?{title:"Master",color:"#a78bfa",icon:"💎"}:e>=2e3?{title:"Expert",color:"#6366f1",icon:"🔮"}:e>=1800?{title:"Advanced",color:"#38bdf8",icon:"⚡"}:e>=1600?{title:"Intermediate",color:"#22c55e",icon:"🌟"}:e>=1400?{title:"Developing",color:"#f59e0b",icon:"🔥"}:e>=1200?{title:"Beginner",color:"#9ca3af",icon:"🌱"}:{title:"Newcomer",color:"#6b7280",icon:"🐣"}}export{o as g};
+//# sourceMappingURL=elo-ranking-pvmFMD_6.js.map
